@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  email          String       @unique()
+  password       String
+  name           String
+  confirmed      Boolean      @default(false)
+  role           String
+
+  @@map("users")
+}
+
+model Client {
+  id             String       @id @default(uuid())
+  createdAt      DateTime     @default(now())
+  secret         String
+  redirectUrls   ClientRedirectUrl[]
+  @@map("clients")
+}
+
+model ClientRedirectUrl {
+  id             String       @id @default(uuid())
+  clientId       String
+  client         Client       @relation(fields: [clientId], references: [id])
+  url           String
+
+  @@map("client_redirect_urls")
+}
